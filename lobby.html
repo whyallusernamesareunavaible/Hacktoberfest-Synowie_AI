@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Multiplayer – Arena</title>
+<link rel="icon" type="image/x-icon" href="ui-assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0a0907;--pn:#12100c;--ln:#6b5a3a;--tx:#c9c3b3;--mu:#807860;--ac:#ffb000;--gd:#55ff55;--bd:#ff5555;--r1:#5f9fff}
+*{box-sizing:border-box;border-radius:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--tx);font:20px/1.15 VT323,'Courier New',monospace;letter-spacing:.02em}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px)}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+button:focus-visible,select:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+h1{margin:0;padding:14px 14px 0;max-width:1400px;margin:auto;font:400 34px VT323,monospace;color:var(--ac)}
+h1::before{content:"@ ";color:var(--gd)}
+h2{margin:14px 0 8px;font:400 24px VT323,monospace;color:var(--ac)}
+h2:first-child{margin-top:0}h2::before{content:"[ "}h2::after{content:" ]"}
+.user{max-width:1400px;margin:6px auto 0;padding:0 14px;color:var(--mu);display:flex;align-items:center;gap:8px}
+.user b{color:var(--ac);font-weight:400}.user a{color:var(--ac);margin-left:10px}
+.settings{position:relative;display:inline-block;margin-left:auto}
+.settings-button{border:0;background:none;color:var(--ac);font-size:38px;line-height:1;padding:0;cursor:pointer}
+.settings-menu{position:absolute;right:0;top:28px;z-index:5;min-width:220px;border:2px solid var(--ln);background:var(--pn);padding:10px;color:var(--tx)}
+.settings-menu label{display:flex;gap:8px;align-items:center;white-space:nowrap}
+.settings-menu label{display:grid;grid-template-columns:1fr 120px 42px;gap:8px;align-items:center;white-space:nowrap}
+.settings-menu input[type=range]{width:120px;accent-color:var(--ac);cursor:pointer}
+.settings-menu output{color:var(--ac);text-align:right}
+.reduced-motion *, .reduced-motion *::before, .reduced-motion *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+.link{background:none;border:0;color:var(--ac);text-decoration:underline;padding:0;margin-left:10px}
+.link:visited{color:var(--ac)}
+.wrap{display:grid;grid-template-columns:minmax(300px,440px) 1fr;gap:14px;padding:14px;max-width:1400px;margin:auto}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.pn{border:4px double var(--ln);background:var(--pn);padding:14px;min-width:0}
+.chip{border:2px solid var(--ln);background:var(--bg);padding:4px 12px}
+.chip:hover:not(:disabled){border-color:var(--ac)}.chip:disabled{opacity:.4;cursor:default}
+.chip.on{background:var(--ac);color:#000;border-color:var(--ac)}
+select{width:100%;background:var(--bg);border:2px solid var(--ln);padding:6px 8px;margin-bottom:6px}
+small,.mu{color:var(--mu)}.up{color:var(--gd)}.dn{color:var(--bd)}.ac{color:var(--ac)}
+#cs{min-height:22px}
+.pr,.ib{display:flex;gap:8px;align-items:center;border:2px solid var(--ln);background:var(--bg);padding:6px 8px;margin-bottom:6px}
+.pr .pi,.ib span{flex:1;min-width:0}.pi b{display:block;font-weight:400;font-size:22px}
+.ib{border-color:var(--ac)}
+.empty{color:var(--mu);padding:8px 0}
+ol{margin:0;padding-left:28px}li{margin-bottom:2px}
+.stage{display:grid;grid-template-columns:1fr 60px 1fr;align-items:center;gap:8px;margin:10px 0;padding:14px;border:2px solid var(--ln);background:radial-gradient(circle,#3a3220 1.5px,transparent 2px) 0 0/16px 16px}
+@media(max-width:700px){.stage{grid-template-columns:1fr}}
+.vs{font-size:34px;color:var(--ac);text-align:center}
+.fc{background:color-mix(in srgb,var(--bg) 75%,transparent);padding:8px;min-width:0}
+.fc b{font-weight:400;font-size:26px}
+.bar{height:16px;border:2px solid var(--ln);background:var(--bg)}
+.bar i{display:block;height:100%;background:var(--gd);width:100%;transition:width .3s steps(6)}
+#ebi{background:var(--bd)}
+.fw{position:relative;height:190px;display:flex;align-items:flex-end;justify-content:center}
+.fg{margin:0;font:22px/1 VT323,monospace;white-space:pre;text-shadow:0 0 6px currentColor;transition:transform .12s}
+#pf.atk{transform:translateX(40px)}#ef.atk{transform:translateX(-40px)}
+.fg.sh{animation:sh .3s steps(4)}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.fl{position:absolute;left:0;right:0;top:20%;text-align:center;font-size:30px;pointer-events:none;animation:fl .9s steps(9) forwards}
+@keyframes fl{to{transform:translateY(-50px);opacity:0}}
+.fl.dmg{color:var(--bd)}.fl.crit{color:var(--ac);font-size:38px}.fl.miss{color:var(--mu)}
+.log{height:190px;overflow:auto;border:2px solid var(--ln);padding:8px;background:var(--bg)}
+#res{font-size:28px;min-height:34px;text-align:center}
+@media(prefers-reduced-motion:reduce){.fg{transition:none}.fg.sh,.fl{animation:none}}
+</style></head>
+<body>
+<h1>Multiplayer</h1>
+<div class="user">Gracz: <b id="un_"></b><a href="kreator-bohatera.html">Kreator</a><a href="arena.html">Arena PvE</a><button class="link" onclick="logout()">Wyloguj</button><span class="settings"><button class="settings-button" type="button" aria-label="Ustawienia" title="Ustawienia" aria-expanded="false" aria-controls="settings-menu">⚙</button><span class="settings-menu" id="settings-menu" hidden><label>Ogranicz animacje <input id="reduced-motion" type="checkbox"><output></output></label><label>Efekty dźwiękowe <input id="effects-volume" type="range" min="0" max="100" step="1"><output id="effects-volume-value"></output></label><label>Muzyka <input id="music-volume" type="range" min="0" max="100" step="1"><output id="music-volume-value"></output></label></span></span></div>
+<div class="wrap">
+ <section class="pn">
+  <h2>Twój build</h2>
+  <select id="sb" aria-label="Zapisane buildy" onchange="chooseBuild()"></select>
+  <div class="mu" id="me">—</div>
+  <div id="cs" role="status"></div>
+  <button class="chip on" id="rc" onclick="connect()" hidden>Połącz ponownie</button>
+  <h2>Gracze online</h2>
+  <div id="pl"></div>
+  <h2>Ranking</h2>
+  <div id="rk"></div>
+ </section>
+ <section class="pn">
+  <h2>Pojedynek</h2>
+  <div id="inc"></div>
+  <div style="text-align:right"><button class="chip" id="sp" onclick="spd()">Prędkość x1</button></div>
+  <div class="stage">
+   <div class="fc"><b id="pnm">—</b><div class="bar"><i id="pbi"></i></div><small id="ptx"></small><div class="fw"><pre class="fg" id="pf"></pre></div></div>
+   <div class="vs">VS</div>
+   <div class="fc"><b id="enm">—</b><div class="bar"><i id="ebi"></i></div><small id="etx"></small><div class="fw"><pre class="fg" id="ef"></pre></div></div>
+  </div>
+  <div id="res" role="status"></div>
+  <div class="log" id="lg"></div>
+ </section>
+</div>
+<pre id="fig" hidden>    _____
+   /     \
+  | o   o |
+   \  ^  /
+  __|===|__
+ /  |   |  \
+ |  | @ |  |
+    |___|
+    || ||
+   _|| ||_</pre>
+<script>
+const $=s=>document.querySelector(s);
+const USER=(()=>{try{return localStorage.getItem('arena:session')}catch(e){return null}})();
+if(!USER)location.replace('login.html');
+const CL={war:{n:'Wojownik',c:'#c0503f'},mag:{n:'Mag',c:'#5b72e0'},rog:{n:'Łucznik',c:'#2f9e6e'}};
+const attackSounds={war:new Audio('the-tower-is-jammed-ost/miecz.flac'),mag:new Audio('the-tower-is-jammed-ost/magik.wav'),rog:new Audio('the-tower-is-jammed-ost/miecz.flac')};
+function playAttackSound(cls){const value=Number(localStorage.getItem('arena:effects-volume'));const volume=(Number.isFinite(value)?Math.max(0,Math.min(100,value)):100)/100;const sound=attackSounds[cls];if(!sound||volume<=0)return;sound.currentTime=0;sound.volume=volume;sound.play().catch(()=>{})}
+const saved=()=>{try{const classNames={war:'Wojownik',mag:'Mag',rog:'Łucznik'},builds=JSON.parse(localStorage.getItem('arena:builds:'+USER))||[];return Array.isArray(builds)?builds.filter(b=>b&&!b.autoDungeon&&classNames[b.c]).map(b=>({...b,n:classNames[b.c]})):[]}catch(e){return[]}};
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+let ws,fatal=false,players=[],rank=[],inc=[],out=null,busy=false,spd1=1,tm=0;
+const send=o=>{if(ws&&ws.readyState==1)ws.send(JSON.stringify(o))};
+const pub=b=>({c:b.c,rk:b.rk,eq:b.eq});
+const same=(a,b)=>a&&b&&a.toLowerCase()==b.toLowerCase();
+const setSt=(t,c)=>{const s=$('#cs');s.textContent=t;s.className=c||''};
+function log(t,c){const l=$('#lg');l.prepend(el('div',c,t));while(l.children.length>60)l.lastChild.remove()}
+function logout(){try{localStorage.removeItem('arena:session')}catch(e){}location.href='login.html'}
+function spd(){spd1=spd1==1?2:spd1==2?4:1;$('#sp').textContent='Prędkość x'+spd1}
+const hb=(s,c,m)=>{$('#'+s+'bi').style.width=Math.max(0,c/m*100)+'%';$('#'+s+'tx').textContent=Math.max(0,Math.round(c))+' / '+Math.round(m)};
+function fx(a,txt,cls){const d=a=='p'?'e':'p',fa=$('#'+a+'f'),fd=$('#'+d+'f');
+ fa.classList.add('atk');setTimeout(()=>fa.classList.remove('atk'),150);
+ if(cls!='miss'){fd.classList.add('sh');setTimeout(()=>fd.classList.remove('sh'),300)}
+ const s=el('span','fl '+cls,txt);fd.parentNode.appendChild(s);setTimeout(()=>s.remove(),900)}
+
+function connect(){
+ if(ws&&ws.readyState<2)return;
+ if(location.protocol=='file:'){setSt('Multiplayer wymaga serwera. Uruchom main.py i otwórz http://localhost:8000/lobby.html','dn');return}
+ const b=saved()[$('#sb').value];
+ if(!b){setSt('Zapisz najpierw build w Kreatorze.','dn');return}
+ fatal=false;setSt('Łączenie…','mu');
+ const wsProtocol=location.protocol=='https:'?'wss://':'ws://';
+ const wsHost=location.port==='8765'?location.host:location.hostname+':8765';
+ ws=new WebSocket(wsProtocol+wsHost+'/ws/lobby');
+ ws.onopen=()=>send({t:'join',nick:USER,build:pub(b)});
+ ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(_){return}on(m)};
+ ws.onerror=()=>setSt('Nie można połączyć się z serwerem multiplayer. Sprawdź, czy FastAPI działa na porcie 8765.','dn');
+ ws.onclose=()=>{if(!fatal)setSt('Rozłączono z serwera multiplayer. Kliknij „Połącz ponownie”.','dn');players=[];inc=[];out=null;busy=false;renderAll();$('#rc').hidden=false}}
+function chooseBuild(){if(ws&&ws.readyState==1){if(!busy)send({t:'build',build:pub(saved()[$('#sb').value])})}else connect()}
+
+function on(m){
+ if(m.t=='welcome'){setSt('Online jako '+m.nick,'up');$('#rc').hidden=true;const s=m.me;
+  $('#me').textContent=`HP ${Math.round(s.hp)} · DPS ${s.dps.toFixed(1)} · Pancerz ${Math.round(s.armor)} · Krytyk ${s.crit}%`}
+ else if(m.t=='lobby'){players=m.players;rank=m.ranking;if(!busy)renderAll()}
+ else if(m.t=='ch'){out=m.out;inc=m.inc;renderInc();if(!busy)renderPlayers()}
+ else if(m.t=='info')log(m.m,'mu');
+ else if(m.t=='error'){setSt(m.m,'dn');log(m.m,'dn');if(m.fatal){fatal=true;$('#rc').hidden=false}}
+ else if(m.t=='duel')duel(m)}
+
+function renderPlayers(){const pl=$('#pl');pl.textContent='';
+ if(!players.length){pl.append(el('div','empty','Brak graczy online.'));return}
+ [...players].sort((a,b)=>b.elo-a.elo).forEach(p=>{const me=same(p.nick,USER),r=el('div','pr'),i=el('span','pi'),n=el('b',null,p.nick+(me?' (Ty)':''));
+  n.style.color=(CL[p.c]||{}).c;
+  i.append(n,el('small',null,`${p.cn} · HP ${p.hp} · DPS ${p.dps} · Pancerz ${p.armor} · Elo ${p.elo} (${p.w}W/${p.l}P)`));r.append(i);
+  if(!me){const mine=same(out,p.nick),b=el('button','chip',mine?'Anuluj':p.st=='duel'?'W walce':'Wyzwij');
+   b.disabled=busy||p.st=='duel'||(!!out&&!mine);b.onclick=()=>send(mine?{t:'cancel'}:{t:'challenge',to:p.nick});r.append(b)}
+  pl.append(r)})}
+function renderRank(){const r=$('#rk');r.textContent='';
+ if(!rank.length){r.append(el('div','empty','Brak rozegranych walk.'));return}
+ const ol=el('ol');rank.forEach(x=>ol.append(el('li',null,`${x.nick}: ${x.elo} (${x.w}W/${x.l}P)`)));r.append(ol)}
+function renderInc(){const c=$('#inc');c.textContent='';
+ if(out){const d=el('div','ib'),b=el('button','chip','Anuluj');d.append(el('span',null,'Czekasz na odpowiedź: '+out),b);b.onclick=()=>send({t:'cancel'});c.append(d)}
+ inc.forEach(n=>{const d=el('div','ib'),y=el('button','chip on','Przyjmij'),x=el('button','chip','Odrzuć');
+  y.disabled=x.disabled=busy;y.onclick=()=>send({t:'accept',from:n});x.onclick=()=>send({t:'decline',from:n});
+  d.append(el('span',null,n+' wyzywa Cię na pojedynek'),y,x);c.append(d)})}
+const renderAll=()=>{renderPlayers();renderRank();renderInc()};
+
+function duel(m){busy=true;clearTimeout(tm);const y=m.you,P=m.players[y],O=m.players[1-y],mx=[m.max[y],m.max[1-y]],art=$('#fig').textContent;
+ $('#res').textContent='';$('#res').className='';$('#pnm').textContent=P.nick;$('#enm').textContent=O.nick;
+ $('#pf').textContent=$('#ef').textContent=art;$('#pf').style.color=CL[P.c].c;$('#ef').style.color=CL[O.c].c;
+ hb('p',mx[0],mx[0]);hb('e',mx[1],mx[1]);log(`Pojedynek: ${P.nick} vs ${O.nick}`,'mu');renderInc();renderPlayers();
+ let i=0;
+ const fin=()=>{const w=m.winner,d=m.elo.po[y]-m.elo.przed[y],r=$('#res');
+  r.textContent=(w==null?'Remis.':w==y?'Wygrywasz!':'Przegrywasz.')+` Elo ${m.elo.po[y]} (${d>=0?'+':''}${d})`;r.className=w==y?'up':w==null?'mu':'dn';
+  log(r.textContent,r.className);send({t:'done'});busy=false;renderAll()};
+ const step=()=>{const e=m.events[i++];if(!e)return fin();
+  const mineHit=e.a==y,att=mineHit?P:O,dfn=mineHit?O:P;
+  playAttackSound(att.c);
+  fx(mineHit?'p':'e',e.k=='miss'?'unik':(e.k=='crit'?'KRYT ':'-')+e.d,e.k=='miss'?'miss':e.k=='crit'?'crit':'dmg');
+  hb('p',e.hp[y],mx[0]);hb('e',e.hp[1-y],mx[1]);
+  log(e.k=='miss'?`${att.nick} atakuje, ale ${dfn.nick} unika.`:`${att.nick} ${e.k=='crit'?'KRYTYKIEM ':''}zadaje ${e.d}.`,mineHit?'up':'dn');
+  tm=setTimeout(step,650/spd1)};
+ tm=setTimeout(step,500)}
+
+$('#un_').textContent=USER;
+{const l=saved(),sb=$('#sb');
+ if(l.length){l.forEach((b,i)=>sb.add(new Option((CL[b.c]||{}).n||b.n||'Nieznana klasa',i)));connect()}
+ else{sb.add(new Option('Brak zapisanych buildów',''));sb.disabled=true;setSt('Zapisz najpierw build w Kreatorze.','dn')}}
+renderAll();
+</script>
+<script>
+const settingsButton=document.querySelector('.settings-button'),settingsMenu=document.querySelector('#settings-menu'),motionToggle=document.querySelector('#reduced-motion'),effectsVolumeInput=document.querySelector('#effects-volume'),musicVolumeInput=document.querySelector('#music-volume'),effectsVolumeValue=document.querySelector('#effects-volume-value'),musicVolumeValue=document.querySelector('#music-volume-value');
+const applyMotion=()=>{const reduced=localStorage.getItem('arena:reduced-motion')==='1';motionToggle.checked=reduced;document.documentElement.classList.toggle('reduced-motion',reduced)};
+settingsButton.onclick=()=>{const open=settingsMenu.hidden;settingsMenu.hidden=!open;settingsButton.setAttribute('aria-expanded',String(open))};
+const applyAudio=()=>{const effects=Number(localStorage.getItem('arena:effects-volume')),music=Number(localStorage.getItem('arena:music-volume'));effectsVolumeInput.value=Number.isFinite(effects)?Math.max(0,Math.min(100,effects)):100;musicVolumeInput.value=Number.isFinite(music)?Math.max(0,Math.min(100,music)):100;effectsVolumeValue.textContent=effectsVolumeInput.value+'%';musicVolumeValue.textContent=musicVolumeInput.value+'%'};
+motionToggle.onchange=()=>{localStorage.setItem('arena:reduced-motion',motionToggle.checked?'1':'0');applyMotion()};
+effectsVolumeInput.oninput=effectsVolumeInput.onchange=()=>{localStorage.setItem('arena:effects-volume',effectsVolumeInput.value);applyAudio()};
+musicVolumeInput.oninput=musicVolumeInput.onchange=()=>{localStorage.setItem('arena:music-volume',musicVolumeInput.value);applyAudio()};
+applyMotion();applyAudio();
+</script>
+</body></html>

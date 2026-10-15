@@ -1,0 +1,4 @@
+# Apache (XAMPP) serwuje statyczne pliki. Frontend kieruje API bezpośrednio
+# do FastAPI na 127.0.0.1:8765, więc proxy Apache nie jest wymagane.
+DirectoryIndex index.html
+AddDefaultCharset UTF-8

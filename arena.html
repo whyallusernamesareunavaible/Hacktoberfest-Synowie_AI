@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arena</title>
+<link rel="icon" type="image/x-icon" href="ui-assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bg:#e4e9f0;--pn:#f6f8fb;--ln:#c3ccda;--tx:#1b2433;--mu:#5d6b82;--ac:#0d7a78;--gd:#17803f;--bd:#c23a2e;--r0:#7b8596;--r1:#2d6bd1;--r2:#8b45c6;--r3:#d48806;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#0f1320;--pn:#181e2e;--ln:#2d3650;--tx:#e6ebf5;--mu:#8e9bb5;--ac:#4fd1c5;--gd:#48d17f;--bd:#ff7468;--r0:#9aa4b8;--r1:#5ea0ff;--r2:#c58bff;--r3:#ffb02e}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#0f1320;--pn:#181e2e;--ln:#2d3650;--tx:#e6ebf5;--mu:#8e9bb5;--ac:#4fd1c5;--gd:#48d17f;--bd:#ff7468;--r0:#9aa4b8;--r1:#5ea0ff;--r2:#c58bff;--r3:#ffb02e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+h1,h2{font-family:VT323,'Courier New',monospace;margin:0}
+h1{font-size:26px;padding:14px 14px 0;max-width:1400px;margin:auto}
+h2{font-size:18px;margin-bottom:10px}
+.app{display:grid;grid-template-columns:300px minmax(340px,1fr) 350px;gap:14px;padding:14px;max-width:1400px;margin:auto}
+@media(max-width:1000px){.app{grid-template-columns:1fr}}
+.pn{background:var(--pn);border:1px solid var(--ln);border-radius:14px;padding:14px;min-width:0}
+.cls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.card{background:none;border:1px solid var(--ln);border-radius:10px;padding:8px 4px;text-align:center}
+.card.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,transparent)}
+.card span{display:block;font-size:24px}
+.pts{float:right;color:var(--mu);font-size:13px}
+.pts b{color:var(--ac);font-size:16px}
+.tree{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.node{border:1px solid var(--ln);border-radius:10px;padding:8px;text-align:center}
+.node.on{border-color:var(--ac)}
+.node .ni{font-size:22px}.node small{display:block;color:var(--mu);font-size:11px;min-height:30px}
+.rk{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.rk button{width:28px;height:28px;border-radius:8px;border:1px solid var(--ln);background:none}
+.rk button:hover{border-color:var(--ac)}
+.link{background:none;border:0;color:var(--mu);text-decoration:underline;margin-top:10px;padding:0}
+.doll{display:grid;grid-template-columns:96px 1fr 96px;gap:12px;align-items:center}
+.col{display:grid;gap:12px}
+.slot{aspect-ratio:1;border:2px solid var(--ln);border-style:dashed;border-radius:14px;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px;gap:2px;overflow:hidden}
+.slot.f{border-style:solid;background:color-mix(in srgb,currentColor 10%,transparent)}
+.slot:hover{border-color:var(--ac)}
+.slot i{font-style:normal;font-size:28px;opacity:.9}
+.slot small{font-size:10px;line-height:1.1;text-align:center;color:var(--tx);max-width:100%}
+.fig{width:100%;max-width:230px;margin:auto;display:block}
+.cname{text-align:center;font:800 20px VT323,'Courier New',monospace}
+.hint{color:var(--mu);text-align:center;font-size:12px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.kpi{border:1px solid var(--ln);border-radius:12px;padding:10px}
+.kpi small{color:var(--mu)}.kpi b{display:block;font:800 32px/1.1 VT323,'Courier New',monospace}
+.d{font-size:12px;font-weight:600;min-height:17px}.up{color:var(--gd)}.dn{color:var(--bd)}
+.sum{min-height:38px;font-size:13px;margin:6px 0}
+.rd{width:100%;max-width:280px;display:block;margin:auto}
+.rows div{display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid var(--ln)}
+#md{position:fixed;inset:0;background:rgba(5,8,15,.6);display:none;align-items:center;justify-content:center;padding:14px;z-index:20}
+#md.open{display:flex}
+.mp{background:var(--pn);border:1px solid var(--ln);border-radius:14px;width:min(560px,100%);max-height:86vh;display:flex;flex-direction:column;padding:14px;gap:10px}
+.tb{display:flex;gap:8px;flex-wrap:wrap}
+.tb input,.tb select{background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:7px 10px}
+.tb input{flex:1;min-width:140px}
+.chip{border:1px solid var(--ln);background:none;border-radius:99px;padding:4px 10px;font-size:12px}
+.chip.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 16%,transparent)}
+.lst{overflow:auto;display:grid;gap:6px}
+.it{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--ln);border-left:4px solid;border-radius:10px;padding:8px 10px;background:none}
+.it:hover{background:color-mix(in srgb,var(--ac) 10%,transparent)}
+.it b{display:block}.it small{color:var(--mu)}
+.it .ic{font-size:24px}
+.empty{color:var(--mu);text-align:center;padding:20px}
+</style><style>
+:root,:root:not([data-theme=light]),:root[data-theme=dark]{color-scheme:dark;--bg:#0a0907;--pn:#12100c;--ln:#6b5a3a;--tx:#c9c3b3;--mu:#807860;--ac:#ffb000;--gd:#55ff55;--bd:#ff5555;--r0:#c9c3b3;--r1:#5f9fff;--r2:#e070ff;--r3:#ffd24a}
+*{border-radius:0!important}
+body{font:20px/1.15 VT323,'Courier New',monospace;letter-spacing:.02em}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px)}
+h1{font-size:34px;color:var(--ac)}
+h1::before{content:"@ ";color:var(--gd)}
+h1::after{content:"_";animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){h1::after{animation:none}}
+h2{font-size:24px;color:var(--ac);font-weight:400}
+h2::before{content:"[ "}h2::after{content:" ]"}
+.pn,.mp{border:4px double var(--ln);background:var(--pn)}
+.pts{float:right;font-size:18px}.pts b{font-size:22px;font-weight:400}
+.card,.chip,.node,.kpi,.it,.slot,.rk button,.tb input,.tb select{border:2px solid var(--ln);background:var(--bg)}
+.card span{font-size:34px;line-height:1}
+.card:nth-child(1) span{color:#ff6b5b}.card:nth-child(2) span{color:var(--r1)}.card:nth-child(3) span{color:var(--gd)}
+.card.on,.chip.on{background:var(--ac);color:#000;border-color:var(--ac)}
+.card.on span{color:#000}
+.node.on{border-color:var(--ac);box-shadow:inset 0 0 0 1px var(--ac)}
+.node .ni{font-size:30px;color:var(--ac);line-height:1.1}
+.node small,.hint,.kpi small,.it small{font-size:16px}
+.kpi b{font-size:46px;font-weight:400;color:var(--tx)}
+.d{font-size:18px}
+.doll>div:nth-child(2){background:radial-gradient(circle,#3a3220 1.5px,transparent 2px) 0 0/16px 16px;border:2px solid var(--ln);padding:10px 0}
+.fig{font:20px/1 VT323,monospace;margin:0 auto 8px;width:auto;max-width:none;text-align:left;white-space:pre;display:table;text-shadow:0 0 6px currentColor}
+.cname{font-weight:400;font-size:28px}
+.slot{border-style:solid}
+.slot i{font-size:44px;line-height:1;text-shadow:0 0 8px currentColor}
+.slot:not(.f) i{opacity:.35}
+.slot small{font-size:15px}
+.link{color:var(--ac)}
+.rd text{font:15px VT323,monospace}
+#md{background:rgba(0,0,0,.75)}
+.lst{counter-reset:i}
+.it{border-left-width:6px}
+.it::before{counter-increment:i;content:counter(i,lower-alpha) ")";color:var(--ac);font-size:22px}
+.it .ic{font-size:30px;width:20px;text-align:center}
+.it b{font-weight:400;font-size:22px}
+</style>
+<style>
+.tabs{max-width:1400px;margin:8px auto 0;padding:0 14px;display:flex;gap:8px}
+.tabs .chip{font-size:22px;padding:4px 16px}
+.arw{display:block;max-width:1400px;margin:14px auto;padding:0 14px}
+.stage{display:grid;grid-template-columns:1fr 54px 1fr 1fr;align-items:center;gap:8px;margin:14px 0;padding:14px;border:2px solid var(--ln);background:radial-gradient(circle,#3a3220 1.5px,transparent 2px) 0 0/16px 16px}
+@media(max-width:900px){.stage{grid-template-columns:1fr 44px 1fr}.stage>.fc:nth-of-type(4){grid-column:3}}
+@media(max-width:700px){.stage{grid-template-columns:1fr}.stage>.vs{display:none}.stage>.fc:nth-of-type(4){grid-column:auto}}
+.vs{font-size:36px;color:var(--ac);text-align:center}
+.fc{background:color-mix(in srgb,var(--bg) 75%,transparent);padding:8px;min-width:0}
+.fc b{font-weight:400;font-size:26px}
+.bar{height:16px;border:2px solid var(--ln);background:var(--bg)}
+.bar i{display:block;height:100%;background:var(--gd);width:100%;transition:width .3s steps(6)}
+#ebi{background:var(--bd)}
+.fw{position:relative;height:190px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px}
+.stage>.fc:first-child .fw{animation:battleBob 1.45s ease-in-out infinite}
+@keyframes battleBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.fg{margin:0;font:22px/1 VT323,monospace;white-space:pre;text-shadow:0 0 6px currentColor;transition:transform .12s}
+#pf.atk{transform:translateX(40px)}#ef.atk{transform:translateX(-40px)}
+.fg.sh{animation:sh .3s steps(4)}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.fl{position:absolute;left:0;right:0;top:20%;text-align:center;font-size:30px;pointer-events:none;animation:fl .9s steps(9) forwards}
+@keyframes fl{to{transform:translateY(-50px);opacity:0}}
+.fl.dmg{color:var(--bd)}.fl.crit{color:var(--ac);font-size:38px}.fl.miss{color:var(--mu)}
+.log{height:200px;overflow:auto;border:2px solid var(--ln);padding:8px;background:var(--bg)}
+.ac{color:var(--ac)}.mu{color:var(--mu)}
+.chip:disabled{opacity:.4;cursor:default}
+.sprite{display:block;width:min(128px,100%);height:auto;aspect-ratio:1;margin:0 auto;background-repeat:no-repeat;image-rendering:pixelated}
+.hero-sprite{background-size:300% 400%;background-position:0 0;background-clip:content-box;overflow:hidden}
+.monster-sprite{width:min(144px,100%);aspect-ratio:7 / 8;background-size:1000% 100%;background-position:0 0;overflow:hidden}
+.monster-toxic{filter:hue-rotate(75deg) saturate(1.45)}
+.monster-armored{filter:grayscale(.25) brightness(.8) contrast(1.2)}
+.monster-raging{filter:hue-rotate(-35deg) saturate(1.8) brightness(1.1)}
+.boss-wizard{width:min(220px,100%);aspect-ratio:1;background-size:800% 100%;background-position:0 0;transform:scaleX(-1);filter:drop-shadow(0 0 8px #e070ff)}
+.boss-card{border-color:#e070ff!important;box-shadow:0 0 14px rgba(224,112,255,.35)}
+.boss-label{color:#e070ff}
+#shop{display:none;margin-top:14px}
+#shop.open{display:block}
+.shop-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.gold{color:#ffd24a}
+.shop-items{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:700px){.shop-items{grid-template-columns:1fr}}
+.shop-item{border:2px solid var(--ln);padding:10px;background:var(--bg)}
+.shop-item strong{display:block;color:var(--r3);font-size:22px}
+.shop-item small{display:block;min-height:36px;color:var(--mu)}
+.shop-item button{width:100%;margin-top:8px}
+.drop{border-color:var(--gd);color:var(--gd);padding:8px;margin-bottom:8px}
+.slot-picker{border:2px solid var(--ac);padding:10px;margin-bottom:8px;background:var(--bg)}
+.slot-picker h3{margin:0 0 8px;color:var(--ac)}
+.slot-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.slot-button{min-height:54px;text-align:left}
+.slot-button small{display:block;color:var(--mu);font-size:15px}
+@media(max-width:700px){.slot-buttons{grid-template-columns:repeat(2,1fr)}}
+.decision-panel{display:none;margin:14px 0;border:3px double var(--ac);padding:12px;background:var(--bg)}
+.decision-panel.open{display:block}
+.decision-title{color:var(--ac);font-size:25px;margin:0 0 10px}
+.decision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.decision-card{border:2px solid var(--ln);background:var(--pn);padding:10px;text-align:left;min-height:96px}
+.decision-card:hover,.decision-card.selected{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset}
+.decision-card b{display:block;color:var(--ac);font-size:22px;margin-bottom:4px}
+.decision-card small{display:block;color:var(--mu)}
+.target-card{border-color:#e070ff;background:color-mix(in srgb,#e070ff 10%,var(--bg))}
+.target-card b{color:#e070ff}
+.enemy-down{opacity:.4;filter:grayscale(1)}
+@keyframes enemyDeath{0%{opacity:1;transform:translateY(0) scale(1) rotate(0)}35%{opacity:1;transform:translateY(-10px) scale(1.08) rotate(-4deg)}100%{opacity:0;transform:translateY(32px) scale(.55) rotate(12deg);filter:grayscale(1)}}
+.enemy-death{animation:enemyDeath .7s steps(8) forwards;pointer-events:none}
+.event-card{border-color:#ffd24a;background:color-mix(in srgb,#ffd24a 8%,var(--bg))}
+.event-card b{color:#ffd24a}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:7px 0;font-size:17px}
+.compare span{display:block;padding:3px 5px;border:1px solid var(--ln)}
+.stat-new{color:#ff9d27}.stat-old{color:#55ff55}
+.rarity{font-size:16px}
+.rarity-0{color:var(--r0)}.rarity-1{color:var(--r1)}.rarity-2{color:var(--r2)}.rarity-3{color:var(--r3)}
+@media(max-width:700px){.decision-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.fw{animation:none}.fg{transition:none}.fg.sh,.fl,.enemy-death{animation:none}}
+.user{max-width:1400px;margin:6px auto 0;padding:0 14px;color:var(--mu);display:flex;align-items:center;gap:8px}
+.user b{color:var(--ac);font-weight:400}.user .link{color:var(--ac);margin-left:8px}
+.settings{position:relative;display:inline-block;margin-left:auto}.settings-button{border:0;background:none;color:var(--ac);font-size:38px;line-height:1;padding:0;cursor:pointer}
+.settings-menu{position:absolute;right:0;top:42px;z-index:5;min-width:220px;border:2px solid var(--ln);background:var(--pn);padding:10px;color:var(--tx)}
+.settings-menu label{display:flex;gap:8px;align-items:center;white-space:nowrap}
+.settings-menu label{display:grid;grid-template-columns:1fr 120px 42px;gap:8px;align-items:center;white-space:nowrap}
+.settings-menu input[type=range]{width:120px;accent-color:var(--ac);cursor:pointer}
+.settings-menu output{color:var(--ac);text-align:right}
+.reduced-motion *, .reduced-motion *::before, .reduced-motion *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+</style>
+</head><body>
+<h1>Arena</h1>
+<div class="user">Gracz: <b id="un_"></b><a class="link" href="kreator-bohatera.html">Kreator bohatera</a><a class="link" href="lobby.html">Lobby multiplayer</a><button class="link" onclick="logout()">Wyloguj</button><span class="settings"><button class="settings-button" type="button" aria-label="Ustawienia" title="Ustawienia" aria-expanded="false" aria-controls="settings-menu">⚙</button><span class="settings-menu" id="settings-menu" hidden><label>Ogranicz animacje <input id="reduced-motion" type="checkbox"><output></output></label><label>Efekty dźwiękowe <input id="effects-volume" type="range" min="0" max="100" step="1"><output id="effects-volume-value"></output></label><label>Muzyka <input id="music-volume" type="range" min="0" max="100" step="1"><output id="music-volume-value"></output></label></span></span></div>
+<div class="arw" id="ar"><section class="pn"><h2>Arena</h2>
+ <div class="tb" style="margin-bottom:10px"><span id="saveStatus" class="mu">Build wczytywany automatycznie</span><a class="chip" href="kreator-bohatera.html" style="text-decoration:none;color:inherit">← Kreator</a></div>
+ <div class="tb" style="justify-content:space-between;align-items:center"><span>Poziom lochu: <b id="lv"></b> (rekord: <b id="bs"></b>)</span><span class="tb"><button class="chip" id="sp" onclick="spd()">Prędkość x1</button><button class="chip on" id="go" onclick="fight()">Walcz!</button></span></div>
+ <div class="stage">
+  <div class="fc"><b id="pnm"></b><div class="bar"><i id="pbi"></i></div><small id="ptx"></small><div class="fw"><div class="sprite hero-sprite fg" id="pf"></div></div></div>
+  <div class="vs">VS</div>
+  <div class="fc"><b id="enm"></b><div class="bar"><i id="ebi"></i></div><small id="etx"></small><div class="fw"><div class="sprite monster-sprite fg" id="ef" aria-label="Grzyb"></div></div></div>
+ <div class="fc" id="enemy2Card" hidden><b id="e2nm"></b><div class="bar"><i id="e2bi"></i></div><small id="e2tx"></small><div class="fw"><div class="sprite monster-sprite fg" id="e2f" aria-label="Drugi przeciwnik"></div></div></div>
+ </div>
+ <section class="decision-panel" id="decisionPanel"></section>
+ <section class="pn" id="shop">
+  <div class="shop-head"><h2>Sklep po bossie</h2><b class="gold">Złoto: <span id="gold"></span> 🪙</b></div>
+  <p class="hint">Wybierz przedmiot, a następnie kliknij slot, który ma zostać zastąpiony.</p>
+  <div id="drop"></div><div id="slotPicker"></div><div class="shop-items" id="shopItems"></div>
+ </section>
+ <div class="log" id="lg"></div>
+</section></div>
+<script>
+const $=s=>document.querySelector(s);
+const USER=(()=>{try{return localStorage.getItem('arena:session')}catch(e){return null}})();
+const TOKEN=(()=>{try{return localStorage.getItem('arena:token')}catch(e){return null}})();
+if(!USER||!TOKEN)location.replace('login.html');
+$('#un_').textContent=USER||'';
+function logout(){try{localStorage.removeItem('arena:session');localStorage.removeItem('arena:token')}catch(e){}location.href='login.html'}
+const CL={war:{n:'Wojownik',c:'#c0503f'},mag:{n:'Mag',c:'#5b72e0'},rog:{n:'Łucznik',c:'#2f9e6e'}};
+const S={cls:'war',eq:{}};
+const characterPath=id=>`Characters/sprite_split/character_${id}/character_${id}_frame32x32.png`;
+const attackSounds={war:new Audio('the-tower-is-jammed-ost/miecz.flac'),mag:new Audio('the-tower-is-jammed-ost/magik.wav'),rog:new Audio('the-tower-is-jammed-ost/miecz.flac')};
+function effectsVolume(){const value=Number(localStorage.getItem('arena:effects-volume'));return Number.isFinite(value)?Math.max(0,Math.min(100,value))/100:1}
+function musicVolume(){const value=Number(localStorage.getItem('arena:music-volume'));return Number.isFinite(value)?Math.max(0,Math.min(100,value))/100:1}
+function playAttackSound(cls){const sound=attackSounds[cls];if(!sound||effectsVolume()<=0)return;sound.currentTime=0;sound.volume=effectsVolume();sound.play().catch(()=>{})}
+const ostPath='the-tower-is-jammed-ost/';
+const ost={
+ intro:new Audio(ostPath+'konstruktorilogin.ogg'),
+ nextFloor:new Audio(ostPath+'nowyfloorv2.ogg'),
+ nextFloorAlt:new Audio(ostPath+'nowyfloor.ogg'),
+ floorCompleted:new Audio(ostPath+'nowyfloor.ogg'),
+ dungeon1:new Audio(ostPath+'The Tower is Jammed 05 - Dungeon BGM 1.ogg'),
+ dungeon2:new Audio(ostPath+'The Tower is Jammed 06 - Dungeon BGM 2.ogg'),
+ dungeon3:new Audio(ostPath+'The Tower is Jammed 07 - Dungeon BGM 3.ogg'),
+ dungeon4:new Audio(ostPath+'The Tower is Jammed 08 - Dungeon BGM 4.ogg'),
+ boss1:new Audio(ostPath+'The Tower is Jammed 09 - Boss Battle 1.ogg'),
+ boss2:new Audio(ostPath+'The Tower is Jammed 10 - Boss Battle 2.ogg'),
+ topFloor:new Audio(ostPath+'The Tower is Jammed 11 - The Top Floor.ogg'),
+ enemyDeath:new Audio(ostPath+'zabicieprzeciwnika.ogg')
+};
+let activeMusic=null;
+function playMusic(name){const music=ost[name];if(!music)return;if(musicVolume()<=0){if(activeMusic)activeMusic.pause();return}if(activeMusic===music&&!music.paused){music.volume=.28*musicVolume();return}if(activeMusic){activeMusic.pause();activeMusic.currentTime=0}activeMusic=music;music.loop=true;music.volume=.28*musicVolume();music.play().catch(()=>{})}
+function playOstCue(name){if(musicVolume()<=0)return;const cue=ost[name];if(!cue)return;cue.loop=false;cue.currentTime=0;cue.volume=.45*musicVolume();cue.play().catch(()=>{})}
+function updateArenaMusic(){if(A.lvl>=20){playMusic('topFloor');return}if(A.lvl%10===0){playMusic(A.lvl%20===0?'boss2':'boss1');return}if(A.lvl===1&&A.best===1){playMusic('intro');return}playMusic('dungeon'+(((A.lvl-1)%4)+1))}
+let B={c:'war',t:{atk:30,hp:180,armor:44,crit:5,mob:30,mag:5,as:1.05}};
+const calc=()=>({...B.t});
+const R=String.raw;
+const EN=[
+ {id:'normal',n:'Grzyb',stats:[50,6,3,1]},
+ {id:'toxic',n:'Grzyb Trujący',stats:[68,8,5,1.05]},
+ {id:'armored',n:'Grzyb Pancerny',stats:[92,7,12,.9]},
+ {id:'raging',n:'Grzyb Wściekły',stats:[58,12,4,1.35]}
+];
+const A={lvl:1,best:1,run:0,spd:1,gold:0,hp:null,gear:{},baseGear:{},shop:[],drop:null,pending:null,decision:null};
+let currentEnemies=[],selectedTarget=0;
+const monsterPath='Potwory/Mushroom/Mushroom%20without%20VFX/Mushroom-Idle.png';
+const wizardPath='Wizard/Sprites/Idle.png';
+function readSavedBuild(){try{const raw=localStorage.getItem('heroBuild');if(!raw)return null;const o=JSON.parse(raw);if(!CL[o.c]||!o.t||!['atk','hp','armor','crit','mob','mag','as'].every(k=>isFinite(o.t[k])&&o.t[k]>0))return null;return o}catch(e){return null}}
+function readArenaProgress(){try{const raw=localStorage.getItem('arenaProgress');if(!raw)return null;const o=JSON.parse(raw);return o&&Number.isFinite(o.lvl)&&Number.isFinite(o.gold)?o:null}catch(e){return null}}
+function buildSignature(build){return JSON.stringify({c:build.c,ch:build.ch,rk:build.rk||{},gear:build.gear||{},t:build.t})}
+function saveArena(){try{localStorage.setItem('arenaProgress',JSON.stringify({buildSig:buildSignature(B),lvl:A.lvl,best:A.best,gold:A.gold,hp:A.hp,gear:A.gear,shop:A.shop,drop:A.drop,decision:A.decision}))}catch(e){log('Nie udało się zapisać postępu areny.','dn')}}
+const mkE=(L,offset=0)=>{const boss=L%10===0&&!offset;if(boss){const k=1+.2*(L-10)/10,hp=Math.round(430*k);return{id:'wizard',n:'Evil Wizard',boss:true,hp,maxHp:hp,atk:22*k,armor:22*k,as:1.15}}const e=EN[(L-1+offset)%EN.length],k=1+.15*(L-1),hp=Math.round(e.stats[0]*k*(offset?0.82:1));return{...e,n:e.n+(offset?' — zwiadowca ':'')+(L>EN.length?' +'+Math.floor((L-1)/EN.length):''),hp,maxHp:hp,atk:e.stats[1]*k*(offset?0.9:1),armor:e.stats[2]*k,as:e.stats[3],boss:false}};
+function gearStats(gear){const t={atk:0,hp:0,armor:0,crit:0,mob:0,mag:0,as:0};for(const it of Object.values(gear)){if(!it)continue;for(const k in it.st)t[k]=(t[k]||0)+it.st[k]}return t}
+function arenaStats(){const t={...B.t},base=gearStats(A.baseGear),current=gearStats(A.gear);for(const k in base)t[k]-=base[k];for(const k in current)t[k]+=current[k];return t}
+function fv(k,v){return k==='as'?Number(v).toFixed(2):Math.round(v*10)/10}
+function itemText(it){return Object.entries(it.st).map(([k,v])=>(v>0?'+':'')+fv(k,v)+' '+({atk:'ATK',hp:'HP',armor:'pancerza',crit:'krytyka',mob:'mobilności',mag:'magii',as:'szybkości'}[k]||k)).join(', ')}
+const slotNames={head:'Głowa',chest:'Klatka',weapon:'Broń',off:'Druga ręka',amulet:'Amulet',boots:'Buty',ring1:'Pierścień 1',ring2:'Pierścień 2'};
+function itemType(it){return it&&(['ring1','ring2'].includes(it.t)?'ring':it.t)}
+function allowedSlots(it){const type=itemType(it);return type==='ring'?['ring1','ring2']:[type]}
+function slotPickerText(slot){return A.gear[slot]?A.gear[slot].n+' — '+itemText(A.gear[slot]):'Pusty slot'}
+function equippedText(it){return allowedSlots(it).map(slot=>slotNames[slot]+': '+slotPickerText(slot)).join('<br>')}
+function compareItem(it){const slots=allowedSlots(it);const old=A.gear[slots[0]];const keys=['atk','hp','armor','crit','mob','mag','as'];return `<div class="compare">${keys.filter(k=>it.st[k]!==undefined||old&&old.st[k]!==undefined).map(k=>`<span class="stat-new">${k.toUpperCase()}: ${it.st[k]===undefined?'—':(it.st[k]>0?'+':'')+fv(k,it.st[k])}</span><span class="stat-old">${k.toUpperCase()}: ${old&&old.st[k]!==undefined?(old.st[k]>0?'+':'')+fv(k,old.st[k]):'—'}</span>`).join('')}</div>`}
+function renderShop(){if(!A.shop.length&&!A.drop){$('#shop').classList.remove('open');$('#drop').innerHTML='';$('#slotPicker').innerHTML='';$('#shopItems').innerHTML='';return}$('#shop').classList.add('open');$('#gold').textContent=A.gold;$('#drop').innerHTML=A.drop?`<div class="drop"><b>DROP: ${A.drop.n}</b><br>${itemText(A.drop)} <button class="chip" onclick="chooseDrop()">Wybierz slot</button></div>`:'';const pendingSlots=A.pending?allowedSlots(A.pending.item):[];$('#slotPicker').innerHTML=A.pending?`<div class="slot-picker"><h3>Wybierz slot dla: ${A.pending.item.n}</h3><div class="slot-buttons">${pendingSlots.map(slot=>`<button class="chip slot-button" onclick="replaceSlot('${slot}')">${slotNames[slot]}<small>${slotPickerText(slot)}</small></button>`).join('')}</div><button class="chip" onclick="cancelSlotChoice()">Anuluj</button></div>`:'';$('#shopItems').innerHTML=A.shop.map((it,i)=>`<div class="shop-item"><strong>${it.n} <span class="rarity rarity-${it.ri}">${['Zwykły','Rzadki','Epicki','Legendarny'][it.ri]}</span></strong><small>Pasuje do: ${allowedSlots(it).map(slot=>slotNames[slot]).join(' / ')}</small>${compareItem(it)}<small class="stat-new">Nowy przedmiot</small><small class="stat-old">Obecny przedmiot</small><b class="gold">${it.price} 🪙</b><button class="chip" onclick="chooseItem(${i})" ${A.gold<it.price?'disabled':''}>Wybierz przedmiot</button></div>`).join('')}
+async function openShop(){try{const seed=cacheSeed(),response=await fetch(`${location.protocol}//${location.hostname}:8765/arena/shop`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({poziom:A.lvl,cache_seed:seed})}),data=await response.json();if(!response.ok)throw new Error(data.detail||'Serwer odrzucił sklep');A.shop=data.items;renderShop();saveArena()}catch(error){log('Nie udało się pobrać sklepu z serwera: '+error.message,'dn')}}
+function chooseDrop(){if(A.drop){A.pending={item:A.drop,drop:true};renderShop()}}
+function chooseItem(i){const it=A.shop[i];if(it&&A.gold>=it.price){A.pending={item:it,index:i};renderShop()}}
+function cancelSlotChoice(){A.pending=null;renderShop()}
+function replaceSlot(slot){if(!A.pending)return;const pending=A.pending;if(!allowedSlots(pending.item).includes(slot)){log('Ten przedmiot nie pasuje do slotu '+(slotNames[slot]||slot)+'.','dn');return}const old=A.gear[slot];A.gear[slot]={...pending.item};delete A.gear[slot].price;if(pending.drop){A.drop=null;log('Podmieniasz slot '+slot+' na drop: '+pending.item.n+'.','up')}else{A.gold-=pending.item.price;A.shop.splice(pending.index,1);log('Kupujesz '+pending.item.n+' i podmieniasz slot '+slot+'.','up')}if(old)log('Zastępujesz: '+old.n+'.','mu');A.pending=null;renderShop();saveArena()}
+const hb=(s,c,m)=>{$('#'+s+'bi').style.width=Math.max(0,c/m*100)+'%';$('#'+s+'tx').textContent=Math.max(0,Math.round(c))+' / '+Math.round(m)};
+function log(t,c){const l=$('#lg'),d=document.createElement('div');d.textContent=t;d.className=c||'';l.prepend(d);while(l.children.length>60)l.lastChild.remove()}
+function setEnemyCard(card,e,prefix){const f=$(prefix+'f'),name=$(prefix+'nm'),bar=$(prefix+'bi'),tx=$(prefix+'tx'),maxHp=e?.maxHp||e?.hp||1;if(!e){card.hidden=true;return}card.hidden=false;const key=(e.boss?'boss:':'enemy:')+e.id+':'+e.n;if(card.dataset.enemyKey!==key){card.dataset.enemyKey=key;card.classList.toggle('boss-card',!!e.boss);name.textContent=e.n;name.className=e.boss?'boss-label':'';f.className=`sprite ${e.boss?'boss-wizard':'monster-sprite monster-'+e.id} fg`;f.style.backgroundImage=`url("${e.boss?wizardPath:monsterPath}")`;f.setAttribute('aria-label',e.n)}bar.style.width=Math.max(0,e.hp/maxHp*100)+'%';tx.textContent=Math.max(0,e.hp)+' / '+maxHp;if(e.hp<=0){playOstCue('enemyDeath');if(!card.classList.contains('enemy-death')){card.classList.add('enemy-death');clearTimeout(card.deathTimer);card.deathTimer=setTimeout(()=>{if(e.hp<=0)card.hidden=true},700)}}else if(card.classList.contains('enemy-death')){card.classList.remove('enemy-death')}}
+function renderArena(enemies=currentEnemies.length?currentEnemies:[mkE(A.lvl)]){
+ const P=arenaStats(),E=enemies[0],E2=enemies[1];
+ $('#lv').textContent=A.lvl;$('#bs').textContent=A.best;$('#pnm').textContent=CL[S.cls].n;
+ $('#pf').style.backgroundImage=`url("${characterPath(B.ch||1)}")`;
+ setEnemyCard($('#ef').parentElement.parentElement,E,'#e');setEnemyCard($('#e2f').parentElement.parentElement,E2,'#e2');$('#enemy2Card').hidden=!E2;
+ $('#enm').textContent=E.n;const currentHp=Number.isFinite(A.hp)?Math.min(A.hp,P.hp):P.hp;
+ hb('p',currentHp,P.hp);if(E)hb('e',E.hp,E.hp);if(E2)hb('e2',E2.hp,E2.hp);$('#go').disabled=!!A.run||!!A.decision}
+function showDecision(title,cards){const box=$('#decisionPanel');box.classList.add('open');box.innerHTML=`<h3 class="decision-title">${title}</h3><div class="decision-grid">${cards.join('')}</div>`}
+function hideDecision(){A.decision=null;$('#decisionPanel').classList.remove('open');$('#decisionPanel').innerHTML=''}
+function showTargetChoice(){A.decision='target';showDecision('Wybierz przeciwnika do ataku',currentEnemies.map((e,i)=>`<button class="decision-card target-card" onclick="startFight(${i})"><b>${i+1}. ${e.n}</b><small>HP: ${e.hp}</small><small>Atak: ${Math.round(e.atk)}</small><small>Kliknij, aby obrać cel</small></button>`));saveArena()}
+function startFight(target){selectedTarget=target;hideDecision();fightRound()}
+function showHealChoice(){A.decision='heal';showDecision('Odpoczynek po pięciu poziomach',[`<button class="decision-card" onclick="useHeal()"><b>❤️ Użyj leczenia</b><small>Przywróć 10% maksymalnego HP.</small><small>Aktualnie: ${Math.round(A.hp)} / ${Math.round(arenaStats().hp)}</small></button>`,`<button class="decision-card" onclick="skipHeal()"><b>🛡️ Zachowaj leczenie</b><small>Nie lecz teraz i zachowaj ryzyko.</small></button>`]);saveArena()}
+function useHeal(){const P=arenaStats();A.hp=Math.min(P.hp,A.hp+P.hp*.1);log('Używasz leczenia: +10% maksymalnego HP.','up');hideDecision();continuePostBattle(false);saveArena();renderArena()}
+function skipHeal(){log('Oszczędzasz leczenie.','mu');hideDecision();continuePostBattle();saveArena()}
+function showEventChoice(){A.decision='event';showDecision('Tajemnicza ścieżka',[`<button class="decision-card event-card" onclick="takeEvent()"><b>🚶 Idź ścieżką</b><small>Jej wynik zostanie wylosowany.</small></button>`,`<button class="decision-card" onclick="skipEvent()"><b>🚪 Nie idź</b><small>Bez nagrody i bez obrażeń.</small></button>`]);saveArena()}
+async function takeEvent(){const seed=cacheSeed();try{const response=await fetch(`${location.protocol}//${location.hostname}:8765/arena/event`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({poziom:A.lvl,cache_seed:seed,max_hp:arenaStats().hp})});const data=await response.json();if(!response.ok)throw new Error(data.detail||'Serwer odrzucił wydarzenie');if(data.typ==='pułapka'){A.hp=Math.max(1,A.hp-data.obrazenia);log('Serwer rozstrzygnął pułapkę: tracisz '+data.obrazenia+' HP.','dn')}else{A.drop=data.drop;log('Serwer przyznał przedmiot: '+A.drop.n+'.','ac')}hideDecision();continuePostBattle(false);saveArena();renderArena()}catch(error){log('Nie udało się rozstrzygnąć wydarzenia: '+error.message,'dn')}}
+function skipEvent(){log('Omijasz tajemniczą ścieżkę.','mu');hideDecision();continuePostBattle();saveArena()}
+function continuePostBattle(eventAvailable=false){if(A.lvl%5===0&&!A.healDone){A.healDone=true;showHealChoice();return}A.healDone=false;if(eventAvailable){showEventChoice();return}if(A.drop)renderShop();setTimeout(()=>{if(!A.run&&!A.decision){updateArenaMusic();renderArena()}},700)}
+function tab(n){document.querySelector('.app').style.display=n?'none':'';$('#ar').style.display=n?'block':'none';$('#t0').classList.toggle('on',!n);$('#t1').classList.toggle('on',!!n);if(n&&!A.run)renderArena()}
+function spd(){A.spd=A.spd==1?2:A.spd==2?4:1;$('#sp').textContent='Prędkość x'+A.spd}
+function fx(a,txt,cls){const d=a=='p'?'e':'p',fa=$('#'+a+'f'),fd=$('#'+d+'f');
+ fa.classList.add('atk');setTimeout(()=>fa.classList.remove('atk'),150);
+ if(cls!='miss'){fd.classList.add('sh');setTimeout(()=>fd.classList.remove('sh'),300)}
+ const s=document.createElement('span');s.className='fl '+cls;s.textContent=txt;fd.parentNode.appendChild(s);setTimeout(()=>s.remove(),900)}
+function cacheSeed(){const a=new Uint32Array(1);if(window.crypto?.getRandomValues)window.crypto.getRandomValues(a);else a[0]=Date.now()>>>0;return a[0]}
+async function fight(){if(A.run||A.decision)return;A.run=1;$('#go').disabled=true;updateArenaMusic();renderArena();const seed=cacheSeed();log('Serwer oblicza walkę (cache '+seed+').','mu');try{const response=await fetch(`${location.protocol}//${location.hostname}:8765/arena/battle`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${TOKEN}`},body:JSON.stringify({build:{nazwa:USER,klasa:{war:'wojownik',mag:'mag',rog:'lotrzyk'}[S.cls],staty:arenaStats()},poziom:A.lvl,cache_seed:seed})});const data=await response.json();if(!response.ok)throw new Error(data.detail||data.errors&&Object.values(data.errors).join(', ')||'Serwer odrzucił walkę');await animateServerBattle(data)}catch(error){A.run=0;$('#go').disabled=false;log('Nie udało się wykonać walki na serwerze: '+error.message,'dn')}}
+async function animateServerBattle(data){const P=arenaStats(),E={id:data.boss?'wizard':'server',n:data.przeciwnik.nazwa,boss:data.boss,hp:data.przeciwnik.max_hp,maxHp:data.przeciwnik.max_hp,atk:data.przeciwnik.atak,armor:data.przeciwnik.pancerz,as:data.przeciwnik.szybkosc};currentEnemies=[E];renderArena(currentEnemies);log('Walka z '+E.n+' została policzona przez serwer.','mu');for(const event of data.zdarzenia){const player=event.atakujacy==='gracz';const enemyHp=event.hp_wroga??(player?event.hp_celu:E.hp);const playerHp=event.hp_gracza??(!player?event.hp_celu:A.hp);if(player){E.hp=enemyHp;playAttackSound(S.cls);fx('p',event.typ==='krytyk'?'KRYT -'+event.obrazenia:event.typ==='unik'?'unik':'-'+event.obrazenia,event.typ==='krytyk'?'crit':event.typ==='unik'?'miss':'dmg');hb('e',E.hp,E.maxHp)}else{A.hp=playerHp;fx('e',event.typ==='unik'?'unik':'-'+event.obrazenia,event.typ==='unik'?'miss':'dmg');hb('p',A.hp,P.hp)}setEnemyCard($('#ef').parentElement.parentElement,E,'#e');await new Promise(resolve=>setTimeout(resolve,Math.max(80,650/A.spd)))}A.run=0;$('#go').disabled=false;if(data.zwyciezca==='gracz'){A.gold+=data.nagroda;A.lvl++;A.best=Math.max(A.best,A.lvl);A.hp=data.boss?P.hp:data.gracz.hp;playOstCue(data.boss?'floorCompleted':A.lvl%2===0?'nextFloorAlt':'nextFloor');log('Zwycięstwo! Serwer przyznał '+data.nagroda+' złota.','up');if(data.drop){A.drop=data.drop;log('Serwer przyznał drop: '+A.drop.n+'.','ac')}if(data.boss)openShop();continuePostBattle(data.event_available)}else{A.hp=data.gracz.hp;log('Porażka. Wynik został ustalony przez serwer.','dn')}currentEnemies=[];saveArena();renderArena()}
+
+
+const savedBuild=readSavedBuild(),savedArena=readArenaProgress();
+if(savedBuild){B=savedBuild;S.cls=savedBuild.c;$('#saveStatus').textContent='Zapisany build: '+CL[savedBuild.c].n;$('#saveStatus').className='up'}
+else $('#saveStatus').textContent='Brak zapisanego buildu — używam Wojownika';
+if(savedBuild&&savedBuild.gear){A.baseGear=savedBuild.gear;A.gear=savedBuild.gear}
+if(savedArena&&(!savedArena.buildSig||savedArena.buildSig===buildSignature(B))){A.lvl=savedArena.lvl;A.best=savedArena.best;A.gold=savedArena.gold;A.hp=Number.isFinite(savedArena.hp)?savedArena.hp:null;A.gear={...A.gear,...(savedArena.gear||{})};A.shop=savedArena.shop||[];A.drop=savedArena.drop||null}
+if(!Number.isFinite(A.hp))A.hp=arenaStats().hp;
+updateArenaMusic();renderArena();if(savedArena&&savedArena.decision==='heal')showHealChoice();if(savedArena&&savedArena.decision==='event')showEventChoice();log(savedBuild?'Automatycznie wczytano zapisany build.':'Domyślny Wojownik. Otwórz Kreator, aby zapisać swój build.','mu');
+renderShop();
+const settingsButton=document.querySelector('.settings-button'),settingsMenu=document.querySelector('#settings-menu'),motionToggle=document.querySelector('#reduced-motion'),effectsVolumeInput=document.querySelector('#effects-volume'),musicVolumeInput=document.querySelector('#music-volume'),effectsVolumeValue=document.querySelector('#effects-volume-value'),musicVolumeValue=document.querySelector('#music-volume-value');
+const applyMotion=()=>{const reduced=localStorage.getItem('arena:reduced-motion')==='1';motionToggle.checked=reduced;document.documentElement.classList.toggle('reduced-motion',reduced)};
+const applyAudio=()=>{effectsVolumeInput.value=Math.round(effectsVolume()*100);musicVolumeInput.value=Math.round(musicVolume()*100);effectsVolumeValue.textContent=effectsVolumeInput.value+'%';musicVolumeValue.textContent=musicVolumeInput.value+'%';if(activeMusic)activeMusic.volume=.28*musicVolume();if(musicVolume()<=0&&activeMusic)activeMusic.pause();else if(musicVolume()>0)updateArenaMusic()};
+settingsButton.onclick=()=>{const open=settingsMenu.hidden;settingsMenu.hidden=!open;settingsButton.setAttribute('aria-expanded',String(open))};
+motionToggle.onchange=()=>{localStorage.setItem('arena:reduced-motion',motionToggle.checked?'1':'0');applyMotion()};
+effectsVolumeInput.oninput=effectsVolumeInput.onchange=()=>{localStorage.setItem('arena:effects-volume',effectsVolumeInput.value);applyAudio()};
+musicVolumeInput.oninput=musicVolumeInput.onchange=()=>{localStorage.setItem('arena:music-volume',musicVolumeInput.value);applyAudio()};
+applyMotion();applyAudio();
+</script></body></html>

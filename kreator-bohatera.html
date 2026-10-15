@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kreator Bohatera</title>
+<link rel="icon" type="image/x-icon" href="ui-assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bg:#e4e9f0;--pn:#f6f8fb;--ln:#c3ccda;--tx:#1b2433;--mu:#5d6b82;--ac:#0d7a78;--gd:#17803f;--bd:#c23a2e;--r0:#7b8596;--r1:#2d6bd1;--r2:#8b45c6;--r3:#d48806;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#0f1320;--pn:#181e2e;--ln:#2d3650;--tx:#e6ebf5;--mu:#8e9bb5;--ac:#4fd1c5;--gd:#48d17f;--bd:#ff7468;--r0:#9aa4b8;--r1:#5ea0ff;--r2:#c58bff;--r3:#ffb02e}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#0f1320;--pn:#181e2e;--ln:#2d3650;--tx:#e6ebf5;--mu:#8e9bb5;--ac:#4fd1c5;--gd:#48d17f;--bd:#ff7468;--r0:#9aa4b8;--r1:#5ea0ff;--r2:#c58bff;--r3:#ffb02e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+h1,h2{font-family:VT323,'Courier New',monospace;margin:0}
+h1{font-size:26px;padding:14px 14px 0;max-width:1400px;margin:auto}
+h2{font-size:18px;margin-bottom:10px}
+.app{display:grid;grid-template-columns:300px minmax(340px,1fr) 350px;gap:14px;padding:14px;max-width:1400px;margin:auto}
+@media(max-width:1000px){.app{grid-template-columns:1fr}}
+.user{max-width:1400px;margin:6px auto 0;padding:0 14px;color:var(--mu);display:flex;align-items:center;gap:8px}
+.user b{color:var(--ac);font-weight:400}.user .link{color:var(--ac);margin-left:8px}
+.settings{position:relative;display:inline-block;margin-left:auto}.settings-button{border:0;background:none;color:var(--ac);font-size:38px;line-height:1;padding:0;cursor:pointer}
+.settings-menu{position:absolute;right:0;top:42px;z-index:5;min-width:220px;border:2px solid var(--ln);background:var(--pn);padding:10px;color:var(--tx)}
+.settings-menu label{display:flex;gap:8px;align-items:center;white-space:nowrap}
+.settings-menu label{display:grid;grid-template-columns:1fr 120px 42px;gap:8px;align-items:center;white-space:nowrap}
+.settings-menu input[type=range]{width:120px;accent-color:var(--ac);cursor:pointer}
+.settings-menu output{color:var(--ac);text-align:right}
+.reduced-motion *, .reduced-motion *::before, .reduced-motion *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+.pn{background:var(--pn);border:1px solid var(--ln);border-radius:14px;padding:14px;min-width:0}
+.cls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.card{background:none;border:1px solid var(--ln);border-radius:10px;padding:8px 4px;text-align:center;min-width:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.card.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,transparent)}
+.card span{display:block;font-size:24px}
+.pn h2:has(.pts){display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:20px}
+.pn h2:has(.pts)>span:first-child{white-space:nowrap}
+.pts{color:var(--mu);font-size:13px;white-space:nowrap;flex:0 0 auto}
+.pts b{color:var(--ac);font-size:16px}
+.tree{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.node{border:1px solid var(--ln);border-radius:10px;padding:8px;text-align:center}
+.node.on{border-color:var(--ac)}
+.node .ni{font-size:22px}.node small{display:block;color:var(--mu);font-size:11px;min-height:30px}
+.rk{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.rk button{width:28px;height:28px;border-radius:8px;border:1px solid var(--ln);background:none}
+.rk button:hover{border-color:var(--ac)}
+.link{background:none;border:0;color:var(--mu);text-decoration:underline;margin-top:10px;padding:0}
+.doll{display:grid;grid-template-columns:96px 1fr 96px;gap:12px;align-items:center}
+.col{display:grid;gap:12px}
+.slot{aspect-ratio:1;border:2px solid var(--ln);border-style:dashed;border-radius:14px;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px;gap:2px;overflow:hidden}
+.slot.f{border-style:solid;background:color-mix(in srgb,currentColor 10%,transparent)}
+.slot:hover{border-color:var(--ac)}
+.slot i{font-style:normal;font-size:28px;opacity:.9}
+.slot small{font-size:10px;line-height:1.1;text-align:center;color:var(--tx);max-width:100%}
+.fig{width:100%;max-width:230px;margin:auto;display:block}
+.cname{text-align:center;font:800 20px VT323,'Courier New',monospace}
+.hint{color:var(--mu);text-align:center;font-size:12px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.kpi{border:1px solid var(--ln);border-radius:12px;padding:10px}
+.kpi small{color:var(--mu)}.kpi b{display:block;font:800 32px/1.1 VT323,'Courier New',monospace}
+.d{font-size:12px;font-weight:600;min-height:17px}.up{color:var(--gd)}.dn{color:var(--bd)}
+.sum{min-height:38px;font-size:13px;margin:6px 0}
+.rd{width:100%;max-width:280px;display:block;margin:auto}
+.rows div{display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid var(--ln)}
+#md,#chars{position:fixed;inset:0;background:rgba(5,8,15,.6);display:none;align-items:center;justify-content:center;padding:14px;z-index:20}
+#md.open,#chars.open{display:flex}
+.mp{background:var(--pn);border:1px solid var(--ln);border-radius:14px;width:min(560px,100%);max-height:86vh;display:flex;flex-direction:column;padding:14px;gap:10px}
+.tb{display:flex;gap:8px;flex-wrap:wrap}
+.tb input,.tb select{background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:7px 10px}
+.tb input{flex:1;min-width:140px}
+.chip{border:1px solid var(--ln);background:none;border-radius:99px;padding:4px 10px;font-size:12px}
+.chip.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 16%,transparent)}
+.lst{overflow:auto;display:grid;gap:6px}
+.it{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--ln);border-left:4px solid;border-radius:10px;padding:8px 10px;background:none}
+.it:hover{background:color-mix(in srgb,var(--ac) 10%,transparent)}
+.it b{display:block}.it small{color:var(--mu)}
+.it .ic{font-size:24px}
+.empty{color:var(--mu);text-align:center;padding:20px}
+.hero-sprite,.monster-sprite{display:block;width:min(128px,100%);height:auto;aspect-ratio:1;margin:0 auto 8px;background-repeat:no-repeat;image-rendering:pixelated}
+.hero-sprite{background-size:300% 400%;background-position:0 0;background-clip:content-box;overflow:hidden;animation:spriteBob 1.4s ease-in-out infinite}
+.character-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;overflow:auto}
+.character-choice{border:2px solid var(--ln);background:var(--bg);padding:6px;color:var(--tx);font:inherit}
+.character-choice.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset}
+.character-choice .hero-sprite{width:min(84px,100%);height:auto;aspect-ratio:1;background-size:300% 400%;margin-bottom:2px}
+.class-card-icon{width:72px;height:72px;object-fit:contain;image-rendering:auto;display:block;margin:0 auto 4px}
+@keyframes spriteBob{50%{transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.hero-sprite{animation:none}}
+</style><style>
+:root,:root:not([data-theme=light]),:root[data-theme=dark]{color-scheme:dark;--bg:#0a0907;--pn:#12100c;--ln:#6b5a3a;--tx:#c9c3b3;--mu:#807860;--ac:#ffb000;--gd:#55ff55;--bd:#ff5555;--r0:#c9c3b3;--r1:#5f9fff;--r2:#e070ff;--r3:#ffd24a}
+*{border-radius:0!important}
+body{font:20px/1.15 VT323,'Courier New',monospace;letter-spacing:.02em}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px)}
+h1{font-size:34px;color:var(--ac)}
+h1::before{content:"@ ";color:var(--gd)}
+h1::after{content:"_";animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){h1::after{animation:none}}
+h2{font-size:24px;color:var(--ac);font-weight:400}
+h2::before{content:"[ "}h2::after{content:" ]"}
+.skill-heading::before,.skill-heading::after{content:none}
+.pn,.mp{border:4px double var(--ln);background:var(--pn)}
+.pts{float:right;font-size:18px}.pts b{font-size:22px;font-weight:400}
+.card,.chip,.node,.kpi,.it,.slot,.rk button,.tb input,.tb select{border:2px solid var(--ln);background:var(--bg)}
+.card span{font-size:24px;line-height:1}
+.card:nth-child(1) span{color:#ff6b5b}.card:nth-child(2) span{color:var(--r1)}.card:nth-child(3) span{color:var(--gd)}
+.card.on,.chip.on{background:var(--ac);color:#000;border-color:var(--ac)}
+.card.on span{color:#000}
+.node.on{border-color:var(--ac);box-shadow:inset 0 0 0 1px var(--ac)}
+.node .ni{font-size:30px;color:var(--ac);line-height:1.1}
+.node small,.hint,.kpi small,.it small{font-size:16px}
+.kpi b{font-size:46px;font-weight:400;color:var(--tx)}
+.d{font-size:18px}
+.doll>div:nth-child(2){background:radial-gradient(circle,#3a3220 1.5px,transparent 2px) 0 0/16px 16px;border:2px solid var(--ln);padding:10px 0}
+.fig{font:20px/1 VT323,monospace;margin:0 auto 8px;width:auto;max-width:none;text-align:left;white-space:pre;display:table;text-shadow:0 0 6px currentColor}
+.cname{font-weight:400;font-size:28px}
+.slot{border-style:solid}
+.slot i{font-size:44px;line-height:1;text-shadow:0 0 8px currentColor}
+.slot:not(.f) i{opacity:.35}
+.slot small{font-size:15px}
+.link{color:var(--ac)}
+.rd text{font:15px VT323,monospace}
+#md{background:rgba(0,0,0,.75)}
+.lst{counter-reset:i}
+.it{border-left-width:6px}
+.it::before{counter-increment:i;content:counter(i,lower-alpha) ")";color:var(--ac);font-size:22px}
+.it .ic{font-size:30px;width:20px;text-align:center}
+.it b{font-weight:400;font-size:22px}
+</style>
+</head><body>
+<h1>Kreator Bohatera</h1>
+<div class="user">Gracz: <b id="un_"></b><a class="link" href="lobby.html">Lobby multiplayer</a><a class="link" href="arena.html">Lobby dungeona</a><button class="link" onclick="logout()">Wyloguj</button><span class="settings"><button class="settings-button" type="button" aria-label="Ustawienia" title="Ustawienia" aria-expanded="false" aria-controls="settings-menu">⚙</button><span class="settings-menu" id="settings-menu" hidden><label>Ogranicz animacje <input id="reduced-motion" type="checkbox"><output></output></label><label>Efekty dźwiękowe <input id="effects-volume" type="range" min="0" max="100" step="1"><output id="effects-volume-value"></output></label><label>Muzyka <input id="music-volume" type="range" min="0" max="100" step="1"><output id="music-volume-value"></output></label></span></span></div>
+<div class="app">
+ <section class="pn"><h2>Klasa i umiejętności</h2>
+  <div class="cls" id="cls"></div>
+  <h2 class="skill-heading"><span>Drzewko umiejętności</span><span class="pts">punkty: <b id="pts"></b></span></h2>
+  <div class="tree" id="tree"></div>
+  <button class="link" onclick="S.rk={};renderTree();renderStats()">Resetuj punkty</button>
+ </section>
+ <section class="pn"><h2>Ekwipunek</h2>
+  <div class="doll"><div class="col" id="cl"></div><div><div class="hero-sprite" id="fig" role="img" aria-label="Wygląd bohatera"></div><div class="cname" id="cn"></div><button class="link" onclick="openCharacters()">Zmień wygląd</button></div><div class="col" id="cr"></div></div>
+  <p class="hint">Kliknij slot, aby wybrać przedmiot. Prawy przycisk myszy zdejmuje.</p>
+  <div style="text-align:center"><button class="chip" onclick="easyEquip()">Łatwe wybieranie</button> <button class="link" onclick="S.eq={};renderDoll();renderStats()">Zdejmij wszystko</button></div>
+ </section>
+ <section class="pn"><h2>Statystyki na żywo</h2>
+  <div class="kpis" id="kp"></div><div class="sum" id="sm"></div><div id="rd"></div><div class="rows" id="rw"></div>
+  <div class="tb"><span class="chip on" id="saveStatus">Zapis automatyczny</span></div>
+  <p class="hint">Twój bohater zapisuje się automatycznie na tym urządzeniu. Lobby dungeona wczyta go bez kodu.</p>
+ </section>
+</div>
+<div id="md" onclick="if(event.target===this)closeM()"><div class="mp" role="dialog" aria-modal="true">
+ <h2 id="mt"></h2>
+ <div class="tb"><input id="q" placeholder="Szukaj przedmiotu…" oninput="M.q=this.value;renderList()"><select id="ss" onchange="M.k=this.value;renderList()"></select></div>
+ <div class="tb" id="rc"></div>
+ <div class="lst" id="ls" onmouseleave="pv(null)"></div>
+ <button class="link" id="un" onclick="equip(null)">Zdejmij przedmiot</button>
+</div></div>
+<div id="chars" onclick="if(event.target===this)closeCharacters()"><div class="mp" role="dialog" aria-modal="true">
+ <h2>Wybierz wygląd: <span id="charClass"></span></h2>
+ <div class="character-grid" id="characterGrid"></div>
+ <button class="link" onclick="closeCharacters()">Zamknij</button>
+</div></div>
+<script>
+const creatorMusic=new Audio('the-tower-is-jammed-ost/konstruktorilogin.ogg');
+const initialMusicVolume=Number(localStorage.getItem('arena:music-volume'));creatorMusic.loop=true;if(!Number.isFinite(initialMusicVolume)||initialMusicVolume>0){creatorMusic.volume=.22*(Number.isFinite(initialMusicVolume)?initialMusicVolume:100)/100;creatorMusic.play().catch(()=>{})}
+const $=s=>document.querySelector(s),PTS=10;
+const USER=(()=>{try{return localStorage.getItem('arena:session')}catch(e){return null}})();
+const TOKEN=(()=>{try{return localStorage.getItem('arena:token')}catch(e){return null}})();
+if(!USER||!TOKEN)location.replace('login.html');
+$('#un_').textContent=USER||'';
+function logout(){try{localStorage.removeItem('arena:session');localStorage.removeItem('arena:token')}catch(e){}location.href='login.html'}
+const ST={atk:'Atak',hp:'HP',armor:'Pancerz',crit:'Krytyk %',mob:'Mobilność',mag:'Magia',as:'Szybkość ataku'};
+const CL={
+ war:{n:'Wojownik',i:'@',img:'ui-assets/wojownik.png',c:'#c0503f',b:{atk:18,hp:150,armor:30,crit:5,mob:30,mag:5,as:1},sk:[['X','Siła',5,{atk:3}],['V','Hart ducha',5,{hp:15}],['#','Twarda skóra',5,{armor:4}],['x','Precyzja',5,{crit:1.5}],['»','Szarża',3,{mob:5}],['&','Furia',3,{as:.04}]]},
+ mag:{n:'Mag',i:'@',img:'ui-assets/mag.png',c:'#5b72e0',b:{atk:10,hp:90,armor:10,crit:8,mob:40,mag:45,as:1},sk:[['+','Intelekt',5,{mag:5}],['*','Ognista kula',5,{atk:3}],['~','Bariera',5,{armor:3}],['`','Skupienie',5,{crit:1.5}],['?','Teleport',3,{mob:6}],['!','Mana',5,{hp:8}]]},
+ rog:{n:'Łucznik',i:'@',img:'ui-assets/lucznik.png',c:'#2f9e6e',b:{atk:15,hp:110,armor:15,crit:20,mob:60,mag:10,as:1.1},sk:[['x','Śmiertelny cios',5,{crit:2}],['>','Zwinność',5,{mob:5}],[')','Ostrza',5,{atk:2.5}],['O','Cień',5,{armor:3}],['z','Szybkie ręce',3,{as:.06}],['%','Trucizna',5,{atk:1.5,mag:2}]]}
+};
+const CHARACTERS={war:[1,2,3,4,5,6,7,8,9,10],mag:[11,12,13,14,15,16,17,18,19,20,21],rog:[22,23,24,25,26,27,28,29,30,31,32]};
+const SL=[['head','Głowa','^','head'],['chest','Tors','[','chest'],['boots','Buty','u','boots'],['amulet','Amulet','"','amulet'],['weapon','Broń',')','weapon'],['off','Druga ręka','(','off'],['ring1','Pierścień','=','ring'],['ring2','Pierścień','=','ring']];
+const RA=[['Zwykły',1],['Rzadki',1.4],['Epicki',1.9],['Legendarny',2.6]];
+const BASE=[['Hełm Strażnika','head',{armor:8,hp:20}],['Kaptur Cienia','head',{crit:3,mob:4}],['Korona Maga','head',{mag:8,hp:10}],['Kolczuga','chest',{armor:14,hp:30}],['Szata Arcymaga','chest',{mag:12,armor:4}],['Skórzana Kurtka','chest',{mob:6,crit:2,armor:6}],['Miecz Bojowy','weapon',{atk:12,as:.05}],['Różdżka Burzy','weapon',{atk:7,mag:12}],['Sztylet Zabójcy','weapon',{atk:8,crit:6,as:.12}],['Tarcza Wieży','off',{armor:16,hp:25}],['Księga Zaklęć','off',{mag:10,crit:2}],['Pierścień Mocy','ring',{atk:4,crit:1.5}],['Sygnet Życia','ring',{hp:30}],['Buty Wędrowca','boots',{mob:10,armor:2}],['Ciężkie Buty','boots',{armor:7,hp:10}],['Amulet Mądrości','amulet',{mag:9,hp:10}],['Talizman Łowcy','amulet',{crit:3,atk:3}]];
+const IC=Object.fromEntries(SL.map(s=>[s[3],s[2]]));
+const IT=[];BASE.forEach(([n,t,s])=>RA.forEach(([,m],ri)=>{const st={};for(const k in s)st[k]=+(s[k]*m).toFixed(k=='as'?2:1);IT.push({n,t,ri,st,id:n+ri})}));
+const S={cls:'war',rk:{},eq:{},pv:null,ch:1},M={};
+const find=(n,r)=>IT.find(i=>i.n==n&&i.ri==r);
+S.eq={weapon:find('Miecz Bojowy',0),chest:find('Kolczuga',0)};
+try{const saved=JSON.parse(localStorage.getItem('heroBuild')||'null');if(saved&&CL[saved.c]){S.cls=saved.c;S.ch=CHARACTERS[saved.c].includes(saved.ch)?saved.ch:CHARACTERS[saved.c][0];S.rk=saved.rk||{};S.eq={};for(const [slot,it] of Object.entries(saved.gear||{})){const match=find(it.n,it.ri);if(match)S.eq[slot]=match}}}catch(e){}
+let skipFirstSave=!!localStorage.getItem('heroBuild');
+const fv=(k,v)=>k=='as'?v.toFixed(2):(Math.round(v*10)/10).toString();
+const used=()=>Object.values(S.rk).reduce((a,b)=>a+b,0);
+
+function calc(eq){const c=CL[S.cls],t={...c.b};
+ c.sk.forEach((n,i)=>{const r=S.rk[i]||0;for(const k in n[3])t[k]+=n[3][k]*r});
+ for(const s in eq){const it=eq[s];if(it)for(const k in it.st)t[k]+=it.st[k]}
+ t.crit=Math.min(t.crit,75);
+ t.dps=(t.atk+t.mag*.4)*(1+t.crit/100*.5)*t.as;
+ return t}
+const AX=['Atak','Obrona','Mobilność','Magia','Krytyk'];
+const axv=t=>[t.dps/250,t.armor/240+t.hp/1200,t.mob/120,t.mag/120,t.crit/50];
+function radar(a,b){const n=5,pt=(i,v)=>{const g=-Math.PI/2+i*2*Math.PI/n;return[120+Math.cos(g)*82*v,120+Math.sin(g)*82*v]};
+ const poly=vs=>vs.map((v,i)=>pt(i,Math.max(.04,Math.min(1,v))).map(x=>x.toFixed(1)).join(',')).join(' ');
+ let s='<svg viewBox="0 0 240 240" class="rd">';
+ [.25,.5,.75,1].forEach(f=>s+=`<polygon points="${poly(Array(n).fill(f))}" fill="none" stroke="var(--ln)"/>`);
+ AX.forEach((x,i)=>{const[e,f]=pt(i,1),[lx,ly]=pt(i,1.22);s+=`<line x1="120" y1="120" x2="${e}" y2="${f}" stroke="var(--ln)"/><text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="var(--mu)">${x}</text>`});
+ s+=`<polygon points="${poly(a)}" fill="var(--ac)" fill-opacity=".3" stroke="var(--ac)" stroke-width="2"/>`;
+ if(b)s+=`<polygon points="${poly(b)}" fill="none" stroke="var(--tx)" stroke-dasharray="4 3" stroke-width="2"/>`;
+ return s+'</svg>'}
+
+function dlt(k,c,p,abs){if(!p)return'';const d=p[k]-c[k];if(Math.abs(d)<.005)return'';
+ const txt=abs?(d>0?'+':'−')+fv(k,Math.abs(d)):(c[k]?(d>0?'+':'−')+(Math.abs(d)/c[k]*100).toFixed(1)+'%':'');
+ return `<span class="${d>0?'up':'dn'}">${txt}</span>`}
+function buildSignature(build){return JSON.stringify({c:build.c,ch:build.ch,rk:build.rk||{},gear:build.gear||{},t:build.t})}
+function syncMultiplayerBuild(build){const nick=USER;if(!nick)return;const classNames={war:'Wojownik',mag:'Mag',rog:'Łucznik'},className=classNames[build.c];if(!className)return;const eq={};for(const [slot,it] of Object.entries(build.gear||{})){if(it)eq[slot]=it.n+it.ri}const entry={n:className,c:build.c,rk:build.rk||{},eq};let builds=[];try{builds=JSON.parse(localStorage.getItem('arena:builds:'+nick)||'[]');if(!Array.isArray(builds))builds=[]}catch(e){builds=[]}builds=builds.filter(x=>x&&!x.autoDungeon&&x.n!=='Automatyczny dungeon'&&classNames[x.c]);const index=builds.findIndex(x=>x.c===build.c);if(index<0)builds.push(entry);else builds[index]=entry;localStorage.setItem('arena:builds:'+nick,JSON.stringify(builds))}
+function saveBuild(c){try{const gear={};for(const [slot,it] of Object.entries(S.eq)){if(it)gear[slot]={n:it.n,t:it.t,ri:it.ri,st:it.st}}const build={c:S.cls,ch:S.ch,rk:S.rk,t:Object.fromEntries(['atk','hp','armor','crit','mob','mag','as'].map(k=>[k,+c[k].toFixed(2)])),gear};build.sig=buildSignature(build);if(skipFirstSave){skipFirstSave=false;syncMultiplayerBuild(build);return}const old=JSON.parse(localStorage.getItem('heroBuild')||'null');if(old&&buildSignature(old)!==build.sig)localStorage.removeItem('arenaProgress');localStorage.setItem('heroBuild',JSON.stringify(build));syncMultiplayerBuild(build)}catch(e){$('#saveStatus').textContent='Nie udało się zapisać buildu';$('#saveStatus').className='chip'}}
+function renderStats(){const c=calc(S.eq),p=S.pv?calc({...S.eq,[S.pv.s]:S.pv.it}):null;
+ $('#kp').innerHTML=[['dps','DPS',0],['hp','Punkty życia',0],['armor','Pancerz',0],['crit','Szansa na krytyk %',1]].map(([k,l,a])=>`<div class="kpi"><small>${l}</small><b>${Math.round((p||c)[k]*10)/10}</b><div class="d">${dlt(k,c,p,a)}</div></div>`).join('');
+ const sm=p?[['dps','Obrażeń'],['hp','HP'],['armor','Pancerza'],['crit','Krytyka'],['mob','Mobilności'],['mag','Magii']].map(([k,l])=>{const d=dlt(k,c,p,0);return d?`${d} ${l}`:''}).filter(Boolean):[];
+ $('#sm').innerHTML=p?(sm.length?sm.join(', '):'<span class="hint">Brak zmian statystyk</span>'):'<span class="hint">Najedź na przedmiot, aby zobaczyć różnicę.</span>';
+ $('#rd').innerHTML=radar(axv(c),p&&axv(p));saveBuild(c);
+ $('#rw').innerHTML=['atk','mag','mob','as'].map(k=>`<div><span>${ST[k]}</span><span>${fv(k,(p||c)[k])} ${dlt(k,c,p,1)}</span></div>`).join('')}
+
+function renderCls(){$('#cls').innerHTML=Object.entries(CL).map(([id,c])=>`<button class="card ${id==S.cls?'on':''}" onclick="pick('${id}')"><img class="class-card-icon" src="${c.img}" alt="${c.n}"><span>${c.n}</span></button>`).join('')}
+function pick(id){S.cls=id;S.rk={};if(!CHARACTERS[id].includes(S.ch))S.ch=CHARACTERS[id][0];renderCls();renderTree();renderDoll();renderStats()}
+function renderTree(){const c=CL[S.cls];
+ $('#tree').innerHTML=c.sk.map((n,i)=>{const r=S.rk[i]||0;return `<div class="node ${r?'on':''}"><div class="ni">${n[0]}</div><b>${n[1]}</b><small>${Object.entries(n[3]).map(([k,v])=>'+'+v+' '+ST[k]).join(', ')} / pkt</small><div class="rk"><button aria-label="Odejmij punkt" onclick="rank(${i},-1)">−</button><span>${r}/${n[2]}</span><button aria-label="Dodaj punkt" onclick="rank(${i},1)">+</button></div></div>`}).join('');
+ $('#pts').textContent=PTS-used()}
+function rank(i,d){const r=S.rk[i]||0,n=r+d;if(n<0||n>CL[S.cls].sk[i][2]||used()+d>PTS)return;S.rk[i]=n;renderTree();renderStats()}
+
+function slotHtml(s){const it=S.eq[s[0]];return `<button class="slot ${it?'f':''}" style="color:${it?`var(--r${it.ri})`:'var(--mu)'};${it?`border-color:var(--r${it.ri})`:''}" onclick="openM('${s[0]}')" oncontextmenu="event.preventDefault();S.eq['${s[0]}']=null;renderDoll();renderStats()" title="${s[1]}"><i>${s[2]}</i><small>${it?it.n:s[1]}</small></button>`}
+function characterPath(id){return `Characters/sprite_split/character_${id}/character_${id}_frame32x32.png`}
+function renderDoll(){$('#cl').innerHTML=SL.slice(0,4).map(slotHtml).join('');$('#cr').innerHTML=SL.slice(4).map(slotHtml).join('');
+ $('#fig').style.backgroundImage=`url("${characterPath(S.ch)}")`;$('#cn').textContent=CL[S.cls].n}
+
+function openM(slot){const t=SL.find(s=>s[0]==slot);Object.assign(M,{slot,t:t[3],q:'',k:'',r:null});
+ $('#mt').textContent='Wybierz: '+t[1];$('#q').value='';
+ $('#ss').innerHTML='<option value="">Wszystkie statystyki</option>'+Object.entries(ST).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+ $('#un').style.display=S.eq[slot]?'':'none';
+ $('#md').classList.add('open');renderRc();renderList();$('#q').focus()}
+function closeM(){$('#md').classList.remove('open');pv(null)}
+function renderRc(){$('#rc').innerHTML=`<button class="chip ${M.r===null?'on':''}" onclick="M.r=null;renderRc();renderList()">Wszystkie</button>`+RA.map((r,i)=>`<button class="chip ${M.r===i?'on':''}" style="color:var(--r${i})" onclick="M.r=${i};renderRc();renderList()">${r[0]}</button>`).join('')}
+function renderList(){let l=IT.filter(i=>i.t==M.t&&(M.r===null||i.ri==M.r)&&i.n.toLowerCase().includes(M.q.toLowerCase())&&(!M.k||i.st[M.k]));
+ l.sort((a,b)=>M.k?b.st[M.k]-a.st[M.k]:b.ri-a.ri);
+ $('#ls').innerHTML=l.length?l.map(i=>`<button class="it" style="border-left-color:var(--r${i.ri})" data-id="${i.id}"><span class="ic">${IC[i.t]}</span><span><b>${i.n} <small style="color:var(--r${i.ri})">${RA[i.ri][0]}</small></b><small>${Object.entries(i.st).map(([k,v])=>'+'+fv(k,v)+' '+ST[k]).join(', ')}</small></span></button>`).join(''):'<div class="empty">Brak przedmiotów. Zmień wyszukiwanie lub filtry.</div>';
+ $('#ls').querySelectorAll('.it').forEach(b=>{const it=IT.find(x=>x.id==b.dataset.id);b.onmouseenter=b.onfocus=()=>pv(it);b.onclick=()=>equip(it)})}
+function pv(it){S.pv=it?{s:M.slot,it}:null;renderStats()}
+function equip(it){S.eq[M.slot]=it;closeM();renderDoll();renderStats()}
+function openCharacters(){$('#charClass').textContent=CL[S.cls].n;$('#characterGrid').innerHTML=CHARACTERS[S.cls].map(id=>`<button class="character-choice ${id==S.ch?'on':''}" onclick="chooseCharacter(${id})"><span class="hero-sprite" style="background-image:url('${characterPath(id)}')"></span><small>Postać ${id}</small></button>`).join('');$('#chars').classList.add('open')}
+function closeCharacters(){$('#chars').classList.remove('open')}
+function chooseCharacter(id){S.ch=id;closeCharacters();renderDoll();renderStats()}
+function easyEquip(){const weights={war:{atk:4,hp:.04,armor:1,crit:1,mob:.15,mag:.1,as:35},mag:{atk:2,hp:.04,armor:.5,crit:1,mob:.15,mag:4,as:30},rog:{atk:3,hp:.04,armor:.5,crit:2,mob:.35,mag:.2,as:35}}[S.cls];for(const [slot,label,icon,type] of SL){const options=IT.filter(i=>i.t==type);S.eq[slot]=options.reduce((best,it)=>{const score=Object.entries(it.st).reduce((sum,[k,v])=>sum+(weights[k]||0)*v,0)+it.ri*2;return !best||score>best.score?{it,score}:best},null).it}renderDoll();renderStats()}
+document.addEventListener('keydown',e=>{if(e.key=='Escape')closeM()});
+ 
+renderCls();renderTree();renderDoll();renderStats();
+const settingsButton=document.querySelector('.settings-button'),settingsMenu=document.querySelector('#settings-menu'),motionToggle=document.querySelector('#reduced-motion'),effectsVolumeInput=document.querySelector('#effects-volume'),musicVolumeInput=document.querySelector('#music-volume'),effectsVolumeValue=document.querySelector('#effects-volume-value'),musicVolumeValue=document.querySelector('#music-volume-value');
+const applyMotion=()=>{const reduced=localStorage.getItem('arena:reduced-motion')==='1';motionToggle.checked=reduced;document.documentElement.classList.toggle('reduced-motion',reduced)};
+const applyAudio=()=>{const effects=Number(localStorage.getItem('arena:effects-volume')),music=Number(localStorage.getItem('arena:music-volume'));effectsVolumeInput.value=Number.isFinite(effects)?Math.max(0,Math.min(100,effects)):100;musicVolumeInput.value=Number.isFinite(music)?Math.max(0,Math.min(100,music)):100;effectsVolumeValue.textContent=effectsVolumeInput.value+'%';musicVolumeValue.textContent=musicVolumeInput.value+'%';const volume=Number(musicVolumeInput.value)/100;creatorMusic.volume=.22*volume;if(volume<=0)creatorMusic.pause();else creatorMusic.play().catch(()=>{})};
+settingsButton.onclick=()=>{const open=settingsMenu.hidden;settingsMenu.hidden=!open;settingsButton.setAttribute('aria-expanded',String(open))};
+motionToggle.onchange=()=>{localStorage.setItem('arena:reduced-motion',motionToggle.checked?'1':'0');applyMotion()};
+effectsVolumeInput.oninput=effectsVolumeInput.onchange=()=>{localStorage.setItem('arena:effects-volume',effectsVolumeInput.value);applyAudio()};
+musicVolumeInput.oninput=musicVolumeInput.onchange=()=>{localStorage.setItem('arena:music-volume',musicVolumeInput.value);applyAudio()};
+applyMotion();applyAudio();
+</script></body></html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Logowanie – Arena</title>
+<link rel="icon" type="image/x-icon" href="ui-assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0a0907;--pn:#12100c;--ln:#6b5a3a;--tx:#c9c3b3;--mu:#807860;--ac:#ffb000;--gd:#55ff55;--bd:#ff5555}
+*{box-sizing:border-box;border-radius:0}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:14px;background:var(--bg);color:var(--tx);font:20px/1.15 VT323,'Courier New',monospace;letter-spacing:.02em}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+main{width:min(460px,100%);border:4px double var(--ln);background:var(--pn);padding:20px}
+h1{margin:0 0 4px;font:400 38px VT323,monospace;color:var(--ac)}
+h1::before{content:"@ ";color:var(--gd)}
+h1::after{content:"_";animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){h1::after{animation:none}}
+h2{margin:18px 0 8px;font:400 24px VT323,monospace;color:var(--ac)}
+h2::before{content:"[ "}h2::after{content:" ]"}
+p{margin:6px 0;color:var(--mu)}
+label{display:block;margin-bottom:4px}
+.row{display:flex;gap:8px}
+input{flex:1;min-width:0;background:var(--bg);border:2px solid var(--ln);padding:8px 10px;font-size:22px}
+.btn{border:2px solid var(--ac);background:var(--ac);color:#000;padding:8px 16px;font-size:22px}
+.btn:hover{filter:brightness(1.15)}
+.chip{border:2px solid var(--ln);background:var(--bg);padding:6px 12px}
+.chip:hover{border-color:var(--ac)}
+.err{color:var(--bd);min-height:22px;margin-top:6px}
+.prof{display:flex;gap:6px;margin-bottom:6px}
+.prof .chip:first-child{flex:1;text-align:left;display:flex;justify-content:space-between;gap:8px}
+.prof small{color:var(--mu);font-size:17px}
+.note{margin-top:18px;border-top:2px solid var(--ln);padding-top:10px;font-size:17px}
+</style></head>
+<body>
+<main>
+ <h1>Dungeons of Gliwice</h1>
+ <p>Zaloguj się, aby zapisywać buildy w tej przeglądarce.</p>
+
+ <form id="f" autocomplete="off">
+  <h2>Nowy lub istniejący profil</h2>
+  <label for="nick">Nick bohatera (2–20 znaków)</label>
+  <div class="row"><input id="nick" maxlength="20" required><button class="btn" type="submit">Wejdź</button></div>
+  <div class="err" id="er" role="alert"></div>
+ </form>
+
+ <section id="ps" hidden>
+  <h2>Profile na tym urządzeniu</h2>
+  <div id="pl"></div>
+ </section>
+
+ <p class="note">Profil i buildy są zapisane tylko w pamięci tej przeglądarki (localStorage). Nie ma hasła ani konta na serwerze, więc każdy, kto korzysta z tej przeglądarki, zobaczy Twoje buildy. Wyczyszczenie danych witryny usunie je na stałe.</p>
+</main>
+<script>
+const $=s=>document.querySelector(s),API=location.port!=='8765'?'http://'+location.hostname+':8765':'',UK='arena:users',SK='arena:session',TK='arena:token',BK='arena:builds:',NEXT='kreator-bohatera.html';
+const users=()=>{try{const u=JSON.parse(localStorage.getItem(UK));return Array.isArray(u)?u.filter(x=>typeof x=='string'):[]}catch(e){return[]}};
+const session=()=>{try{return localStorage.getItem(SK)}catch(e){return null}};
+const count=u=>{try{const b=JSON.parse(localStorage.getItem(BK+u));return Array.isArray(b)?b.length:0}catch(e){return 0}};
+async function enter(raw){const er=$('#er');er.textContent='';
+ const nick=raw.trim().replace(/\s+/g,' ');
+ if(!/^[\p{L}\p{N} _-]{2,20}$/u.test(nick)){er.textContent='Nick: 2–20 znaków, litery, cyfry, spacja, _ lub -.';return}
+ try{const l=users(),f=l.find(u=>u.toLowerCase()==nick.toLowerCase()),name=f||nick;
+  if(!f){l.push(name);localStorage.setItem(UK,JSON.stringify(l))}
+  const response=await fetch(API+'/auth/token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nick:name})});
+  const contentType=response.headers.get('content-type')||'';
+  const data=contentType.includes('application/json')?await response.json():null;
+  if(!response.ok)throw new Error(data?.detail||`Serwer zwrócił HTTP ${response.status}. Uruchom FastAPI i otwórz aplikację przez http://127.0.0.1:8765/login.html.`);
+  if(!data?.access_token)throw new Error('Serwer nie zwrócił tokenu. Otwórz aplikację przez http://127.0.0.1:8765/login.html.');
+  localStorage.setItem(SK,name);localStorage.setItem(TK,data.access_token)}
+ catch(e){er.textContent=e.message||'Nie udało się zalogować. Spróbuj ponownie.';return}
+ location.href=NEXT}
+function del(u){if(!confirm('Usunąć profil „'+u+'” razem z zapisanymi buildami?'))return;
+ try{localStorage.setItem(UK,JSON.stringify(users().filter(x=>x!==u)));localStorage.removeItem(BK+u);if(session()===u)localStorage.removeItem(SK)}catch(e){}
+ render()}
+function render(){const l=users(),pl=$('#pl');pl.textContent='';$('#ps').hidden=!l.length;
+ l.forEach(u=>{const d=document.createElement('div'),a=document.createElement('button'),x=document.createElement('button'),n=document.createElement('span'),c=document.createElement('small');
+  d.className='prof';a.className='chip';x.className='chip';x.textContent='✕';x.setAttribute('aria-label','Usuń profil '+u);
+  n.textContent=u;c.textContent='buildy: '+count(u);a.append(n,c);
+  a.onclick=()=>enter(u);x.onclick=()=>del(u);d.append(a,x);pl.append(d)})}
+$('#f').addEventListener('submit',e=>{e.preventDefault();enter($('#nick').value)});
+render();
+</script>
+</body></html>
